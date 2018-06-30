@@ -89,5 +89,32 @@ namespace PokerHandEvaluator
         {
             return Cards.GroupBy(c => c.Suit).Count(g => g.Count() == n);
         }
+
+        public static IList<string> Evaluate(IDictionary<string, PokerHand> hands)
+        {
+            var len = Enum.GetValues(typeof(HandType)).Length;
+            var winners = new List<string>();
+            HandType winningType = HandType.HighCard;
+
+            foreach (var name in hands.Keys)
+            for(var handType = HandType.RoyalFlush; (int)handType < len; handType = handType + 1)
+            {
+                    var hand = hands[name];
+                    if(hand.IsValid(handType))
+                    {
+                        int compareHands = 0;
+                        int compareCards = 0;
+                        if(winners.Count == 0 || (compareHands = winningType.CompareTo(handType)) > 0 || compareHands == 0 && (compareCards = hand.CompareTo(hands[winners[0]])) >= 0)
+                        {
+                            if (compareHands > 0 || compareCards > 0)
+                                winners.Clear();
+                            winners.Add(name);
+                            winningType = handType;
+                        }
+                        break;
+                    }
+            }
+            return winners;
+        }
     }
 }
