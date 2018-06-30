@@ -7,6 +7,7 @@ namespace PokerHandEvaluator
 {
     public enum RankType : int { Two = 2, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace}
     public enum SuitType : int { Spades, Hearts, Diamonds, Clubs}
+    public enum HandType : int { RoyalFlush, StraightFlush, FourOfAKInd, FullHouse, Flush, Straight, ThreeOfAKind, TwoPairs, OnePair, HighCard}
     public struct Card
     {
         public RankType Rank { get; private set; }
@@ -49,6 +50,44 @@ namespace PokerHandEvaluator
                     return -1;
             }
             return 0;
+        }
+
+        public bool IsValid(HandType handType)
+        {
+            switch (handType)
+            {
+                case HandType.RoyalFlush:
+                    return IsValid(HandType.StraightFlush) && Cards[4].Rank == RankType.Ace;
+                case HandType.StraightFlush:
+                    return IsValid(HandType.Flush) && IsValid(HandType.Straight);
+                case HandType.FourOfAKInd:
+                    return GetGroupByRankCount(4) == 1;
+                case HandType.FullHouse:
+                    return IsValid(HandType.ThreeOfAKind) && IsValid(HandType.OnePair);
+                case HandType.Flush:
+                    return GetGroupBySuitCount(5) == 1;
+                case HandType.Straight:
+                    return (int)Cards[4].Rank - (int)Cards[0].Rank == 4 || Cards[0].Rank == RankType.Ace;
+                case HandType.ThreeOfAKind:
+                    return GetGroupByRankCount(3) == 1;
+                case HandType.TwoPairs:
+                    return GetGroupByRankCount(2) == 1;
+                case HandType.OnePair:
+                    return GetGroupByRankCount(2) == 1;
+                case HandType.HighCard:
+                    return GetGroupByRankCount(1) == 1;
+            }
+            return false;
+        }
+
+        private int GetGroupByRankCount(int n)
+        {
+            return Cards.GroupBy(c => c.Rank).Count(g => g.Count() == n);
+        }
+
+        private int GetGroupBySuitCount(int n)
+        {
+            return Cards.GroupBy(c => c.Suit).Count(g => g.Count() == n);
         }
     }
 }
