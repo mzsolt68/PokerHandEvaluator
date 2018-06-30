@@ -28,6 +28,11 @@ namespace PokerHandEvaluator
         {
             Cards = new Card[]{c1, c2, c3, c4, c5};
             Sort();
+
+            if (GetGroupByRankCount(5) != 0)
+                throw new Exception("Nem lehet öt egyforma értékű lapja!");
+            if (HasDuplicates())
+                throw new Exception("Nem lehetnek egyforma lapjai!");
         }
 
         private void Sort()
@@ -92,19 +97,22 @@ namespace PokerHandEvaluator
 
         public static IList<string> Evaluate(IDictionary<string, PokerHand> hands)
         {
+            if (HasDuplicates(hands.Values.ToList()))
+                throw new Exception("Egyforma lapok vannak kiosztva!");
             var len = Enum.GetValues(typeof(HandType)).Length;
             var winners = new List<string>();
             HandType winningType = HandType.HighCard;
 
             foreach (var name in hands.Keys)
-            for(var handType = HandType.RoyalFlush; (int)handType < len; handType = handType + 1)
             {
+                for (var handType = HandType.RoyalFlush; (int)handType < len; handType = handType + 1)
+                {
                     var hand = hands[name];
-                    if(hand.IsValid(handType))
+                    if (hand.IsValid(handType))
                     {
                         int compareHands = 0;
                         int compareCards = 0;
-                        if(winners.Count == 0 || (compareHands = winningType.CompareTo(handType)) > 0 || compareHands == 0 && (compareCards = hand.CompareTo(hands[winners[0]])) >= 0)
+                        if (winners.Count == 0 || (compareHands = winningType.CompareTo(handType)) > 0 || compareHands == 0 && (compareCards = hand.CompareTo(hands[winners[0]])) >= 0)
                         {
                             if (compareHands > 0 || compareCards > 0)
                                 winners.Clear();
@@ -113,8 +121,35 @@ namespace PokerHandEvaluator
                         }
                         break;
                     }
+                }
             }
             return winners;
+        }
+
+        public bool Contains(Card card)
+        {
+            return Cards.Where(c=>c.Rank == card.Rank && c.Suit == card.Suit).Any();
+        }
+
+        public bool HasDuplicates()
+        {
+            return Cards.GroupBy(c=> new {c.Rank, c.Suit }).Where(c=>c.Skip(1).Any()).Any();
+        }
+
+        public static bool HasDuplicates(IList<PokerHand> hands)
+        {
+            for (int i = 0; i < hands.Count; i++)
+            {
+                foreach (var card in hands[i].Cards)
+                {
+                    for (int j = 0; j < hands.Count; j++)
+                    {
+                        if (i != j && !hands[j].Contains(card))
+                            return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }
