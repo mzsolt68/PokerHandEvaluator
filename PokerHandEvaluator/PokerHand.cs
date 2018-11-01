@@ -5,29 +5,6 @@ using System.Text;
 
 namespace PokerHandEvaluator
 {
-    public enum RankType : int { Two = 2, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace}
-    public enum SuitType : int { Spades, Hearts, Diamonds, Clubs}
-    public enum HandType : int { RoyalFlush, StraightFlush, FourOfAKInd, FullHouse, Flush, Straight, ThreeOfAKind, TwoPairs, OnePair, HighCard}
-
-    public struct Card
-    {
-        public RankType Rank { get; private set; }
-        public SuitType Suit { get; private set; }
-
-        public Card(RankType rank, SuitType suit) : this()
-        {
-            Rank = rank;
-            Suit = suit;
-        }
-    }
-
-    public class Player
-    {
-        public string Name { get; set; }
-        public PokerHand Hand { get; set; }
-        public HandType HandType { get; set; }
-    }
-
     public class PokerHand : IComparable<PokerHand>
     {
         public Card[] Cards { get; private set; }
@@ -113,12 +90,12 @@ namespace PokerHandEvaluator
 
             foreach (var name in hands.Keys)
             {
+                Player p = new Player();
+                p.Name = name;
+                p.Hand = hands[name];
                 for (var handType = HandType.RoyalFlush; (int)handType < len; handType = handType + 1)
                 {
                     var hand = hands[name];
-                    Player p = new Player();
-                    p.Name = name;
-                    p.Hand = hand;
                     if (hand.IsValid(handType))
                     {
                         int compareHands = 0;
