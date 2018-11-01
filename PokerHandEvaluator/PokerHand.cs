@@ -76,7 +76,7 @@ namespace PokerHandEvaluator
                 case HandType.ThreeOfAKind:
                     return GetGroupByRankCount(3) == 1;
                 case HandType.TwoPairs:
-                    return GetGroupByRankCount(2) == 1;
+                    return GetGroupByRankCount(2) == 2;
                 case HandType.OnePair:
                     return GetGroupByRankCount(2) == 1;
                 case HandType.HighCard:
