@@ -88,7 +88,7 @@ namespace PokerHandEvaluator
                 case HandType.OnePair:
                     return GetGroupByRankCount(2) == 1;
                 case HandType.HighCard:
-                    return GetGroupByRankCount(1) == 1;
+                    return GetGroupByRankCount(1) == 5;
             }
             return false;
         }

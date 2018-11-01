@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerHandEvaluator", "PokerHandEvaluator\PokerHandEvaluator.csproj", "{06DEA3D1-A370-4A68-87C5-04D61D4CF93A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerHandEvaluator", "PokerHandEvaluator\PokerHandEvaluator.csproj", "{06DEA3D1-A370-4A68-87C5-04D61D4CF93A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerHandEvaluator.Test", "PokerHandEvaluator.Test\PokerHandEvaluator.Test.csproj", "{ECA85C40-3837-4D5C-91AF-95AA61292C11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{06DEA3D1-A370-4A68-87C5-04D61D4CF93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06DEA3D1-A370-4A68-87C5-04D61D4CF93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06DEA3D1-A370-4A68-87C5-04D61D4CF93A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECA85C40-3837-4D5C-91AF-95AA61292C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECA85C40-3837-4D5C-91AF-95AA61292C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECA85C40-3837-4D5C-91AF-95AA61292C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECA85C40-3837-4D5C-91AF-95AA61292C11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
