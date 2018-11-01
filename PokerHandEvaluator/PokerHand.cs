@@ -8,6 +8,7 @@ namespace PokerHandEvaluator
     public enum RankType : int { Two = 2, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace}
     public enum SuitType : int { Spades, Hearts, Diamonds, Clubs}
     public enum HandType : int { RoyalFlush, StraightFlush, FourOfAKInd, FullHouse, Flush, Straight, ThreeOfAKind, TwoPairs, OnePair, HighCard}
+
     public struct Card
     {
         public RankType Rank { get; private set; }
@@ -18,6 +19,13 @@ namespace PokerHandEvaluator
             Rank = rank;
             Suit = suit;
         }
+    }
+
+    public class Player
+    {
+        public string Name { get; set; }
+        public PokerHand Hand { get; set; }
+        public HandType HandType { get; set; }
     }
 
     public class PokerHand : IComparable<PokerHand>
@@ -95,12 +103,12 @@ namespace PokerHandEvaluator
             return Cards.GroupBy(c => c.Suit).Count(g => g.Count() == n);
         }
 
-        public static IList<string> Evaluate(IDictionary<string, PokerHand> hands)
+        public static IList<Player> Evaluate(IDictionary<string, PokerHand> hands)
         {
             if (HasDuplicates(hands.Values.ToList()))
                 throw new Exception("Egyforma lapok vannak kiosztva!");
             var len = Enum.GetValues(typeof(HandType)).Length;
-            var winners = new List<string>();
+            var winners = new List<Player>();
             HandType winningType = HandType.HighCard;
 
             foreach (var name in hands.Keys)
@@ -108,16 +116,20 @@ namespace PokerHandEvaluator
                 for (var handType = HandType.RoyalFlush; (int)handType < len; handType = handType + 1)
                 {
                     var hand = hands[name];
+                    Player p = new Player();
+                    p.Name = name;
+                    p.Hand = hand;
                     if (hand.IsValid(handType))
                     {
                         int compareHands = 0;
                         int compareCards = 0;
-                        if (winners.Count == 0 || (compareHands = winningType.CompareTo(handType)) > 0 || compareHands == 0 && (compareCards = hand.CompareTo(hands[winners[0]])) >= 0)
+                        if (winners.Count == 0 || (compareHands = winningType.CompareTo(handType)) > 0 || compareHands == 0 && (compareCards = hand.CompareTo(hands[winners[0].Name])) >= 0)
                         {
                             if (compareHands > 0 || compareCards > 0)
                                 winners.Clear();
-                            winners.Add(name);
                             winningType = handType;
+                            p.HandType = winningType;
+                            winners.Add(p);
                         }
                         break;
                     }
