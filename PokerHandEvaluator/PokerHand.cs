@@ -144,7 +144,7 @@ namespace PokerHandEvaluator
                 {
                     for (int j = 0; j < hands.Count; j++)
                     {
-                        if (i != j && !hands[j].Contains(card))
+                        if (i != j && hands[j].Contains(card))
                             return true;
                     }
                 }
