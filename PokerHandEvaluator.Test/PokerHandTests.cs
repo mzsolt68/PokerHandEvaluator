@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using FluentAssertions;
+using System.Collections.Generic;
 
 namespace PokerHandEvaluator.Test
 {
@@ -27,6 +28,31 @@ namespace PokerHandEvaluator.Test
                 new Card(RankType.Ace, SuitType.Spades), new Card(RankType.King, SuitType.Diamonds), new Card(RankType.Queen, SuitType.Clubs),
                 new Card(RankType.Queen, SuitType.Clubs), new Card(RankType.Ace, SuitType.Hearts)
             );
+            todo.Should().Throw<Exception>();
+        }
+        [TestMethod]
+        public void ShouldThrowExceptionTwoPlayersSameCards()
+        {
+            Player p1 = new Player
+            {
+                Name = "Player 1",
+                Hand = new PokerHand
+                (
+                new Card(RankType.Ace, SuitType.Spades), new Card(RankType.King, SuitType.Hearts), new Card(RankType.Ten, SuitType.Hearts),
+                new Card(RankType.Ten, SuitType.Spades), new Card(RankType.Ace, SuitType.Hearts)
+                )
+            };
+            Player p2 = new Player
+            {
+                Name = "Player 2",
+                Hand = new PokerHand
+                (
+                new Card(RankType.Ace, SuitType.Spades), new Card(RankType.Nine, SuitType.Clubs), new Card(RankType.Ten, SuitType.Clubs),
+                new Card(RankType.Two, SuitType.Clubs), new Card(RankType.Seven, SuitType.Clubs)
+                )
+            };
+            List<Player> players = new List<Player> { p1, p2 };
+            Action todo = () => PokerHand.Evaluate(players);
             todo.Should().Throw<Exception>();
         }
         [TestMethod]
@@ -148,6 +174,56 @@ namespace PokerHandEvaluator.Test
                 new Card(RankType.King, SuitType.Diamonds), new Card(RankType.Jack, SuitType.Diamonds)
             );
             hand.IsValid(HandType.RoyalFlush).Should().BeTrue();
+        }
+        [TestMethod]
+        public void ShouldFulshWinOverTwoPair()
+        {
+            Player p1 = new Player
+            {
+                Name = "Player 1",
+                Hand = new PokerHand
+                (
+                new Card(RankType.Ace, SuitType.Spades), new Card(RankType.King, SuitType.Hearts), new Card(RankType.Ten, SuitType.Hearts),
+                new Card(RankType.Ten, SuitType.Spades), new Card(RankType.Ace, SuitType.Hearts)
+                )
+            };
+            Player p2 = new Player
+            {
+                Name = "Player 2",
+                Hand = new PokerHand
+                (
+                new Card(RankType.Ace, SuitType.Clubs), new Card(RankType.Nine, SuitType.Clubs), new Card(RankType.Ten, SuitType.Clubs),
+                new Card(RankType.Two, SuitType.Clubs), new Card(RankType.Seven, SuitType.Clubs)
+                )
+            };
+            List<Player> players = new List<Player> { p1, p2 };
+            IList<Player> winners = PokerHand.Evaluate(players);
+            winners[0].HandType.Should().Be(HandType.Flush);
+        }
+        [TestMethod]
+        public void ShouldTwoWinnersWithTwoPairs()
+        {
+            Player p1 = new Player
+            {
+                Name = "Player 1",
+                Hand = new PokerHand
+                (
+                new Card(RankType.Ace, SuitType.Spades), new Card(RankType.Two, SuitType.Hearts), new Card(RankType.Ten, SuitType.Hearts),
+                new Card(RankType.Ten, SuitType.Spades), new Card(RankType.Ace, SuitType.Hearts)
+                )
+            };
+            Player p2 = new Player
+            {
+                Name = "Player 2",
+                Hand = new PokerHand
+                (
+                new Card(RankType.Ace, SuitType.Clubs), new Card(RankType.Ace, SuitType.Diamonds), new Card(RankType.Ten, SuitType.Clubs),
+                new Card(RankType.Two, SuitType.Clubs), new Card(RankType.Ten, SuitType.Diamonds)
+                )
+            };
+            List<Player> players = new List<Player> { p1, p2 };
+            IList<Player> winners = PokerHand.Evaluate(players);
+            winners[0].HandType.Should().BeEquivalentTo(winners[1].HandType);
         }
     }
 }
