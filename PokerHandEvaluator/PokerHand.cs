@@ -80,33 +80,28 @@ namespace PokerHandEvaluator
             return Cards.GroupBy(c => c.Suit).Count(g => g.Count() == n);
         }
 
-        public static IList<Player> Evaluate(IDictionary<string, PokerHand> hands)
+        public static IList<Player> Evaluate(List<Player> players)
         {
-            if (HasDuplicates(hands.Values.ToList()))
-                throw new Exception("Egyforma lapok vannak kiosztva!");
+            HasPlayersSameCards(players);
             var len = Enum.GetValues(typeof(HandType)).Length;
             var winners = new List<Player>();
             HandType winningType = HandType.HighCard;
 
-            foreach (var name in hands.Keys)
+            foreach (var player in players)
             {
-                Player p = new Player();
-                p.Name = name;
-                p.Hand = hands[name];
                 for (var handType = HandType.RoyalFlush; (int)handType < len; handType = handType + 1)
                 {
-                    var hand = hands[name];
-                    if (hand.IsValid(handType))
+                    if (player.Hand.IsValid(handType))
                     {
                         int compareHands = 0;
                         int compareCards = 0;
-                        if (winners.Count == 0 || (compareHands = winningType.CompareTo(handType)) > 0 || compareHands == 0 && (compareCards = hand.CompareTo(hands[winners[0].Name])) >= 0)
+                        if (winners.Count == 0 || (compareHands = winningType.CompareTo(handType)) > 0 || compareHands == 0 && (compareCards = player.Hand.CompareTo(winners[0].Hand)) >= 0)
                         {
                             if (compareHands > 0 || compareCards > 0)
                                 winners.Clear();
                             winningType = handType;
-                            p.HandType = winningType;
-                            winners.Add(p);
+                            player.HandType = winningType;
+                            winners.Add(player);
                         }
                         break;
                     }
@@ -125,20 +120,19 @@ namespace PokerHandEvaluator
             return Cards.GroupBy(c=> new {c.Rank, c.Suit }).Where(c=>c.Skip(1).Any()).Any();
         }
 
-        public static bool HasDuplicates(IList<PokerHand> hands)
+        public static void HasPlayersSameCards(List<Player> players)
         {
-            for (int i = 0; i < hands.Count; i++)
+            for(int i = 0; i < players.Count; i++)
             {
-                foreach (var card in hands[i].Cards)
+                foreach(var card in players[i].Hand.Cards)
                 {
-                    for (int j = 0; j < hands.Count; j++)
+                    for(int j = 0; j < players.Count; j++)
                     {
-                        if (i != j && hands[j].Contains(card))
-                            return true;
+                        if(i != j && players[j].Hand.Cards.Contains(card))
+                            throw new Exception("Egyforma lapok vannak kiosztva!");
                     }
                 }
             }
-            return false;
         }
     }
 }

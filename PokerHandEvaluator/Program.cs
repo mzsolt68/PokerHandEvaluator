@@ -7,8 +7,6 @@ namespace PokerHandEvaluator
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            Dictionary<string, PokerHand> hands = new Dictionary<string, PokerHand>();
             Player p1 = new Player
             {
                 Name = "Player1",
@@ -33,9 +31,8 @@ namespace PokerHandEvaluator
                 new Card(RankType.Seven, SuitType.Clubs)
                 )
             };
-            hands.Add(p1.Name, p1.Hand);
-            hands.Add(p2.Name, p2.Hand);
-            foreach (var player in PokerHand.Evaluate(hands))
+            List<Player> players = new List<Player> { p1, p2 };
+            foreach (var player in PokerHand.Evaluate(players))
             {
                 Console.WriteLine($"{player.Name} lapja: {player.HandType}");
             }
